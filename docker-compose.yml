@@ -6,4 +6,5 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080" # Adjust the port as needed
+      - "8080:8080" # Adjust the port as needed, if you need to run on 9090, change this as "9090:8080"
+
