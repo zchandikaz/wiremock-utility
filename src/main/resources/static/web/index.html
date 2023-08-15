@@ -1,0 +1,80 @@
+<html>
+<head>
+    <title>WireMock Json Path Validator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+            integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <style>
+        textarea {
+            width: 100%;
+        }
+        #alertSuccess, #alertFailed{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div>
+
+    <div class="container-fluid p-5 bg-primary text-white text-center">
+        <h1>WireMock JSON Path Validator</h1>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="input-group mb-3">
+                <span class="input-group-text">JSONPath</span>
+                <input type="text" class="form-control" id="txtJsonPath">
+                <button class="btn btn-primary" type="button" id="btnEvaluate">Evaluate</button>
+            </div>
+            <div class="alert alert-primary" id="alertSuccess" role="alert">
+                Test Passed!
+            </div>
+
+            <div class="alert alert-danger" id="alertFailed" role="alert">
+                Test Failed!
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <label for="txtInput">Input</label>
+                <textarea class="form-control" id="txtInput" rows="10"></textarea>
+            </div>
+            <div class="col-sm-6">
+                <label for="txtOutput">Evaluation Result</label>
+                <textarea class="form-control" id="txtOutput" rows="10"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#btnEvaluate").click(() => {
+        $("#alertSuccess,#alertFailed").hide();
+        $.ajax({
+            url: "/api/validation/json-path",
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({
+                value: $("#txtInput").val(),
+                path: $("#txtJsonPath").val(),
+            }),
+            success: function (data) {
+                $(data?.matches ? "#alertSuccess" : "#alertFailed").show();
+                $("#txtOutput").val(JSON.stringify(data?.result, null, 2));
+            },
+            error: function (xhr, status, error) {
+                $("#alertFailed").show();
+                $("#txtOutput").val(error);
+            }
+        });
+
+    });
+</script>
+</body>
+</html>
